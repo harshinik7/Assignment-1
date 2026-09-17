@@ -80,23 +80,76 @@ def depthFirstSearch(problem):
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
-    """
-    YOUR CODE HERE
-    """
+    fringe = util.Stack()
+    closed = set()
+
+    start = problem.getStartState()
+    fringe.push((start, []))
+    while not fringe.isEmpty():
+       state, actions = fringe.pop()
+       if state in closed:
+        continue
+
+       closed.add(state)
+       if problem.isGoalState(state):
+          return actions
+       for successor, action, cost in problem.getSuccessors(state):
+            newActions = actions + [action]
+            fringe.push((successor, newActions))
 
     util.raiseNotDefined()
     
 
 def breadthFirstSearch(problem):
-    """
-    YOUR CODE HERE
-    """
+    fringe = util.Queue()
+    closed = set()
+
+    start = problem.getStartState()
+    fringe.push((start, []))
+    while not fringe.isEmpty():
+        state, actions = fringe.pop()
+
+        if state in closed:
+            continue
+
+        closed.add(state)
+
+        if problem.isGoalState(state):
+            return actions
+
+        for successor, action, cost in problem.getSuccessors(state):
+            newActions = actions + [action]
+            fringe.push((successor, newActions))
+
     util.raiseNotDefined()
+
 
 def uniformCostSearch(problem):
     """
     YOUR CODE HERE
     """
+    fringe = util.PriorityQueue()
+    closed = set()
+
+    start = problem.getStartState()
+    fringe.push((start, [], 0), 0)
+
+    while not fringe.isEmpty():
+        state, actions, currentCost = fringe.pop()
+
+        if state in closed:
+            continue
+
+        closed.add(state)
+
+        if problem.isGoalState(state):
+            return actions
+
+        for successor, action, cost in problem.getSuccessors(state):
+            newActions = actions + [action]
+            newCost = currentCost + cost
+
+            fringe.push((successor, newActions, newCost), newCost)
     util.raiseNotDefined()
 
 def nullHeuristic(state, problem=None):
@@ -107,9 +160,29 @@ def nullHeuristic(state, problem=None):
     return 0
 
 def aStarSearch(problem, heuristic=nullHeuristic):
-    """
-    YOUR CODE HERE
-    """
+    fringe = util.PriorityQueue()
+    closed = set()
+
+    start = problem.getStartState()
+    fringe.push((start, [], 0), heuristic(start, problem))
+
+    while not fringe.isEmpty():
+        state, actions, currentCost = fringe.pop()
+
+        if state in closed:
+            continue
+
+        closed.add(state)
+
+        if problem.isGoalState(state):
+            return actions
+
+        for successor, action, cost in problem.getSuccessors(state):
+            newActions = actions + [action]
+            newCost = currentCost + cost
+            priority = newCost + heuristic(successor, problem)
+
+            fringe.push((successor, newActions, newCost), priority)
     util.raiseNotDefined()
 
 
